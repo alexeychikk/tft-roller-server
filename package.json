@@ -7,20 +7,21 @@
     "node": ">= 16.13.0"
   },
   "scripts": {
-    "start": "tsx watch src/index.ts",
+    "start": "ts-node src/index.ts",
     "build": "tsc",
     "prebuild": "npm run clean",
     "clean": "rimraf build",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "prettify": "npx prettier --write .",
-    "test": "mocha -r tsx test/**_test.ts --exit --timeout 15000",
-    "loadtest": "tsx loadtest/example.ts --room my_room --numClients 2"
+    "test": "mocha -r ts-node test/**_test.ts --exit --timeout 15000",
+    "loadtest": "ts-node loadtest/example.ts --room gameRoom --numClients 2"
   },
   "dependencies": {
-    "@colyseus/monitor": "^0.15.0",
-    "@colyseus/playground": "^0.15.3",
-    "@colyseus/tools": "^0.15.0",
-    "colyseus": "^0.15.0",
+    "@colyseus/monitor": "^0.15.4",
+    "@colyseus/playground": "^0.15.10",
+    "@colyseus/schema": "^2.0.26",
+    "@colyseus/tools": "^0.15.30",
+    "colyseus": "^0.15.15",
     "express": "^4.18.2"
   },
   "devDependencies": {
@@ -35,6 +36,8 @@
     "mocha": "^10.2.0",
     "prettier": "^3.2.4",
     "rimraf": "^5.0.0",
+    "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0",
     "tsx": "^3.12.6",
     "typescript": "^5.3.3"
   }
