@@ -22,7 +22,8 @@
     "@colyseus/schema": "^2.0.26",
     "@colyseus/tools": "^0.15.30",
     "colyseus": "^0.15.15",
-    "express": "^4.18.2"
+    "express": "^4.18.2",
+    "reflect-metadata": "^0.2.1"
   },
   "devDependencies": {
     "@colyseus/loadtest": "^0.15.0",

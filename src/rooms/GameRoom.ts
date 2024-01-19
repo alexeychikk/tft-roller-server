@@ -9,27 +9,47 @@ export class GameRoom extends Room<Game> {
     this.setState(new Game());
 
     this.onMessage('buyExperience', (client) => {
-      console.log('buyExperience', client.sessionId);
-      this.state.buyExperience(client.sessionId);
+      try {
+        console.log('buyExperience', client.sessionId);
+        this.state.buyExperience(client.sessionId);
+      } catch {
+        /**/
+      }
     });
     this.onMessage('buyChampion', (client, message: { index: number }) => {
-      console.log('buyChampion', client.sessionId);
-      this.state.buyChampion(client.sessionId, message.index);
+      try {
+        console.log('buyChampion', client.sessionId);
+        this.state.buyChampion(client.sessionId, message.index);
+      } catch {
+        /**/
+      }
     });
     this.onMessage('sellUnit', (client, message: UnitContext) => {
-      console.log('sellUnit', client.sessionId);
-      this.state.sellUnit(client.sessionId, message);
+      try {
+        console.log('sellUnit', client.sessionId);
+        this.state.sellUnit(client.sessionId, message);
+      } catch {
+        /**/
+      }
     });
     this.onMessage(
       'moveUnit',
       (client, message: { source: UnitContext; dest: UnitContext }) => {
-        console.log('moveUnit', client.sessionId);
-        this.state.moveUnit(client.sessionId, message.source, message.dest);
+        try {
+          console.log('moveUnit', client.sessionId);
+          this.state.moveUnit(client.sessionId, message.source, message.dest);
+        } catch {
+          /**/
+        }
       },
     );
     this.onMessage('reroll', (client) => {
-      console.log('reroll', client.sessionId);
-      this.state.reroll(client.sessionId);
+      try {
+        console.log('reroll', client.sessionId);
+        this.state.reroll(client.sessionId);
+      } catch {
+        /**/
+      }
     });
   }
 

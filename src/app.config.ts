@@ -2,7 +2,7 @@ import config from '@colyseus/tools';
 import { monitor } from '@colyseus/monitor';
 import { playground } from '@colyseus/playground';
 
-import { GameRoom } from './rooms';
+import { DummyRoom, GameRoom } from './rooms';
 
 export default config({
   initializeGameServer: (gameServer) => {
@@ -10,6 +10,7 @@ export default config({
      * Define your room handlers:
      */
     gameServer.define('gameRoom', GameRoom).enableRealtimeListing();
+    gameServer.define('dummyRoom', DummyRoom).enableRealtimeListing();
   },
 
   initializeExpress: (app) => {
