@@ -9,9 +9,10 @@
     "strictPropertyInitialization": false,
     "esModuleInterop": true,
     "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "useDefineForClassFields": false,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "useDefineForClassFields": false,
     "baseUrl": ".",
     "paths": {
       "@src/*": ["src/*"],
