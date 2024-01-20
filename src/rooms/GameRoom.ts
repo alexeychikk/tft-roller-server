@@ -1,12 +1,16 @@
 import { Room, Client } from '@colyseus/core';
-import { Game, UnitContext } from '@tft-roller';
+import { CHAMPIONS_POOL, GameSchema, UnitContext } from '@tft-roller';
 
-export class GameRoom extends Room<Game> {
+export class GameRoom extends Room<GameSchema> {
   maxClients = 8;
 
   onCreate(options: unknown) {
     console.log('GameRoom created', options);
-    this.setState(new Game());
+    const state = new GameSchema({
+      players: {},
+      shopChampionPool: CHAMPIONS_POOL,
+    });
+    this.setState(state);
 
     this.onMessage('buyExperience', (client) => {
       try {
