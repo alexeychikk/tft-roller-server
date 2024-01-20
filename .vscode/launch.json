@@ -5,12 +5,22 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "type": "pwa-node",
+      "type": "node",
       "request": "launch",
-      "name": "Start Server",
+      "name": "Dev Server",
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run-script", "start"],
-      "protocol": "inspector",
+      "console": "integratedTerminal",
+      "sourceMaps": true,
+      "restart": true,
+      "internalConsoleOptions": "neverOpen"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Prod Server",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run-script", "start:prod"],
       "console": "integratedTerminal",
       "sourceMaps": true,
       "restart": true,

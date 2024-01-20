@@ -16,7 +16,7 @@
     "baseUrl": ".",
     "paths": {
       "@src/*": ["src/*"],
-      "@tft-roller": ["../tft-roller-shared/src/index.ts"],
+      "@tft-roller": ["../tft-roller-shared/src"],
     },
   },
   "include": ["src"],
