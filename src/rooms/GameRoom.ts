@@ -1,11 +1,11 @@
-import { Room, Client } from '@colyseus/core';
+import { Room, Client, logger } from '@colyseus/core';
 import { CHAMPIONS_POOL, GameSchema, UnitContext } from '@tft-roller';
 
 export class GameRoom extends Room<GameSchema> {
   maxClients = 8;
 
   onCreate(options: unknown) {
-    console.log('GameRoom created', options);
+    logger.info('GameRoom created', options);
     const state = new GameSchema({
       players: {},
       shopChampionPool: CHAMPIONS_POOL,
@@ -14,7 +14,7 @@ export class GameRoom extends Room<GameSchema> {
 
     this.onMessage('buyExperience', (client) => {
       try {
-        console.log('buyExperience', client.sessionId);
+        logger.info('buyExperience', client.sessionId);
         this.state.buyExperience(client.sessionId);
       } catch {
         /**/
@@ -22,7 +22,7 @@ export class GameRoom extends Room<GameSchema> {
     });
     this.onMessage('buyChampion', (client, message: { index: number }) => {
       try {
-        console.log('buyChampion', client.sessionId);
+        logger.info('buyChampion', client.sessionId);
         this.state.buyChampion(client.sessionId, message.index);
       } catch {
         /**/
@@ -30,7 +30,7 @@ export class GameRoom extends Room<GameSchema> {
     });
     this.onMessage('sellUnit', (client, message: UnitContext) => {
       try {
-        console.log('sellUnit', client.sessionId);
+        logger.info('sellUnit', client.sessionId);
         this.state.sellUnit(client.sessionId, message);
       } catch {
         /**/
@@ -40,7 +40,7 @@ export class GameRoom extends Room<GameSchema> {
       'moveUnit',
       (client, message: { source: UnitContext; dest: UnitContext }) => {
         try {
-          console.log('moveUnit', client.sessionId);
+          logger.info('moveUnit', client.sessionId);
           this.state.moveUnit(client.sessionId, message.source, message.dest);
         } catch {
           /**/
@@ -49,7 +49,7 @@ export class GameRoom extends Room<GameSchema> {
     );
     this.onMessage('reroll', (client) => {
       try {
-        console.log('reroll', client.sessionId);
+        logger.info('reroll', client.sessionId);
         this.state.reroll(client.sessionId);
       } catch {
         /**/
@@ -58,16 +58,24 @@ export class GameRoom extends Room<GameSchema> {
   }
 
   onJoin(client: Client, options: unknown) {
-    console.log('client joined', client.sessionId, options);
-    this.state.createPlayer(client.sessionId);
+    logger.info('client joined', client.sessionId, options);
+    try {
+      this.state.createPlayer(client.sessionId);
+    } catch {
+      /**/
+    }
   }
 
   onLeave(client: Client, consented: boolean) {
-    console.log('client left', client.sessionId, consented);
-    this.state.removePlayer(client.sessionId);
+    logger.info('client left', client.sessionId, consented);
+    try {
+      this.state.removePlayer(client.sessionId);
+    } catch {
+      /**/
+    }
   }
 
   onDispose() {
-    console.log('room', this.roomId, 'disposing...');
+    logger.info('room', this.roomId, 'disposing...');
   }
 }

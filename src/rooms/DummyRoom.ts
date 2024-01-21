@@ -1,4 +1,4 @@
-import { Room, Client } from '@colyseus/core';
+import { logger, Room, Client } from '@colyseus/core';
 import { Schema, type } from '@colyseus/schema';
 
 class DummyState extends Schema {
@@ -10,19 +10,19 @@ export class DummyRoom extends Room<DummyState> {
   maxClients = 8;
 
   onCreate(options: unknown) {
-    console.log('DummyRoom created', options);
+    logger.info('DummyRoom created', options);
     this.setState(new DummyState({ x: 3, y: 4 }));
   }
 
   onJoin(client: Client, options: unknown) {
-    console.log('client joined', client.sessionId, options);
+    logger.info('client joined', client.sessionId, options);
   }
 
   onLeave(client: Client, consented: boolean) {
-    console.log('client left', client.sessionId, consented);
+    logger.info('client left', client.sessionId, consented);
   }
 
   onDispose() {
-    console.log('room', this.roomId, 'disposing...');
+    logger.info('room', this.roomId, 'disposing...');
   }
 }

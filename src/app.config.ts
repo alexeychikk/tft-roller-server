@@ -5,7 +5,7 @@ import basicAuth from 'express-basic-auth';
 import express from 'express';
 import path from 'path';
 
-import { DummyRoom, GameRoom } from './rooms';
+import { GameRoom } from './rooms';
 
 export default config({
   initializeGameServer: (gameServer) => {
@@ -13,9 +13,6 @@ export default config({
      * Define your room handlers:
      */
     gameServer.define('gameRoom', GameRoom).enableRealtimeListing();
-    if (process.env.NODE_ENV !== 'production') {
-      gameServer.define('dummyRoom', DummyRoom).enableRealtimeListing();
-    }
   },
 
   initializeExpress: (app) => {
