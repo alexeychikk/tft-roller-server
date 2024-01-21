@@ -1,7 +1,7 @@
 import type { Client } from '@colyseus/core';
 import { logger, Room } from '@colyseus/core';
 import type { UnitContext } from '@tft-roller';
-import { CHAMPIONS_POOL, GameSchema } from '@tft-roller';
+import { CHAMPIONS_POOL, GameMessageType, GameSchema } from '@tft-roller';
 
 export class GameRoom extends Room<GameSchema> {
   maxClients = 8;
@@ -14,44 +14,47 @@ export class GameRoom extends Room<GameSchema> {
     });
     this.setState(state);
 
-    this.onMessage('buyExperience', (client) => {
+    this.onMessage(GameMessageType.BuyExperience, (client) => {
       try {
-        logger.info('buyExperience', client.sessionId);
+        logger.info(GameMessageType.BuyExperience, client.sessionId);
         this.state.buyExperience(client.sessionId);
       } catch {
         /**/
       }
     });
-    this.onMessage('buyChampion', (client, message: { index: number }) => {
+    this.onMessage(
+      GameMessageType.BuyChampion,
+      (client, message: { index: number }) => {
+        try {
+          logger.info(GameMessageType.BuyChampion, client.sessionId);
+          this.state.buyChampion(client.sessionId, message.index);
+        } catch {
+          /**/
+        }
+      },
+    );
+    this.onMessage(GameMessageType.SellUnit, (client, message: UnitContext) => {
       try {
-        logger.info('buyChampion', client.sessionId);
-        this.state.buyChampion(client.sessionId, message.index);
-      } catch {
-        /**/
-      }
-    });
-    this.onMessage('sellUnit', (client, message: UnitContext) => {
-      try {
-        logger.info('sellUnit', client.sessionId);
+        logger.info(GameMessageType.SellUnit, client.sessionId);
         this.state.sellUnit(client.sessionId, message);
       } catch {
         /**/
       }
     });
     this.onMessage(
-      'moveUnit',
+      GameMessageType.MoveUnit,
       (client, message: { source: UnitContext; dest: UnitContext }) => {
         try {
-          logger.info('moveUnit', client.sessionId);
+          logger.info(GameMessageType.MoveUnit, client.sessionId);
           this.state.moveUnit(client.sessionId, message.source, message.dest);
         } catch {
           /**/
         }
       },
     );
-    this.onMessage('reroll', (client) => {
+    this.onMessage(GameMessageType.Reroll, (client) => {
       try {
-        logger.info('reroll', client.sessionId);
+        logger.info(GameMessageType.Reroll, client.sessionId);
         this.state.reroll(client.sessionId);
       } catch {
         /**/
@@ -78,6 +81,6 @@ export class GameRoom extends Room<GameSchema> {
   }
 
   onDispose() {
-    logger.info('room', this.roomId, 'disposing...');
+    logger.info('room', this.roomId, 'disposed');
   }
 }

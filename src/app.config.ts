@@ -1,18 +1,21 @@
-import config from '@colyseus/tools';
-import { monitor } from '@colyseus/monitor';
-import { playground } from '@colyseus/playground';
-import basicAuth from 'express-basic-auth';
-import express from 'express';
 import path from 'path';
 
-import { GameRoom } from './rooms';
+import { logger, matchMaker } from '@colyseus/core';
+import { monitor } from '@colyseus/monitor';
+import { playground } from '@colyseus/playground';
+import config from '@colyseus/tools';
+import express from 'express';
+import basicAuth from 'express-basic-auth';
+import { RoomType } from '@tft-roller';
+
+import { GameRoom, PublicLobbyRoom } from './rooms';
 
 export default config({
   initializeGameServer: (gameServer) => {
-    /**
-     * Define your room handlers:
-     */
-    gameServer.define('gameRoom', GameRoom).enableRealtimeListing();
+    // matchMaker.controller.exposedMethods = ['join', 'joinById', 'reconnect'];
+
+    gameServer.define(RoomType.Game, GameRoom).enableRealtimeListing();
+    gameServer.define(RoomType.Lobby, PublicLobbyRoom);
   },
 
   initializeExpress: (app) => {
@@ -58,9 +61,8 @@ export default config({
     app.use('/colyseus', basicAuthMiddleware, monitor());
   },
 
-  beforeListen: () => {
-    /**
-     * Before before gameServer.listen() is called.
-     */
+  beforeListen: async () => {
+    const lobby = await matchMaker.createRoom(RoomType.Lobby, {});
+    logger.info('lobby created', lobby);
   },
 });
