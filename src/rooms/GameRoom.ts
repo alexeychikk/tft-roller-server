@@ -1,5 +1,7 @@
-import { Room, Client, logger } from '@colyseus/core';
-import { CHAMPIONS_POOL, GameSchema, UnitContext } from '@tft-roller';
+import type { Client } from '@colyseus/core';
+import { logger, Room } from '@colyseus/core';
+import type { UnitContext } from '@tft-roller';
+import { CHAMPIONS_POOL, GameSchema } from '@tft-roller';
 
 export class GameRoom extends Room<GameSchema> {
   maxClients = 8;

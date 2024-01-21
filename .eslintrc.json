@@ -7,11 +7,39 @@
   ],
   "parser": "@typescript-eslint/parser",
   "parserOptions": { "ecmaVersion": "latest", "sourceType": "module" },
+  "plugins": ["import"],
   "rules": {
     "@typescript-eslint/no-non-null-assertion": "off",
     "@typescript-eslint/no-unused-vars": [
       "error",
       { "ignoreRestSiblings": true }
-    ]
+    ],
+    "no-multiple-empty-lines": ["error", { "max": 1 }],
+    "@typescript-eslint/consistent-type-imports": "error",
+    "import/order": [
+      "error",
+      {
+        "newlines-between": "always",
+        "alphabetize": {
+          "order": "asc",
+          "caseInsensitive": true
+        },
+        "pathGroups": [
+          {
+            "pattern": "@tft-roller",
+            "group": "external",
+            "position": "after"
+          },
+          {
+            "pattern": "@src/**",
+            "group": "parent",
+            "position": "before"
+          }
+        ],
+        "pathGroupsExcludedImportTypes": ["builtin"],
+        "distinctGroup": false
+      }
+    ],
+    "import/no-duplicates": "error"
   }
 }

@@ -14,15 +14,16 @@
     "clean": "rimraf build",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "prettify": "npx prettier --write .",
+    "fix": "npm run lint -- --fix && npm run prettify",
     "test": "mocha -r ts-node/register -r tsconfig-paths/register test/**_test.ts --exit --timeout 15000",
     "loadtest": "ts-node loadtest/example.ts --room gameRoom --numClients 2"
   },
   "dependencies": {
+    "@colyseus/core": "^0.15.23",
     "@colyseus/monitor": "^0.15.4",
     "@colyseus/playground": "^0.15.10",
     "@colyseus/schema": "^2.0.26",
     "@colyseus/tools": "^0.15.30",
-    "colyseus": "^0.15.15",
     "express": "^4.18.2",
     "express-basic-auth": "^1.2.1",
     "reflect-metadata": "^0.2.1",
@@ -37,6 +38,7 @@
     "@typescript-eslint/parser": "^6.19.0",
     "eslint": "^8.56.0",
     "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-import": "^2.29.1",
     "mocha": "^10.2.0",
     "nodemon": "^3.0.3",
     "prettier": "^3.2.4",
@@ -44,6 +46,6 @@
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
     "tsconfig-replace-paths": "^0.0.14",
-    "typescript": "^5.3.3"
+		"typescript": "~5.2.2"
   }
 }
