@@ -5,7 +5,6 @@ import { logger, matchMaker } from '@colyseus/core';
 import { monitor } from '@colyseus/monitor';
 import { playground } from '@colyseus/playground';
 import config from '@colyseus/tools';
-import historyApiFallback from 'connect-history-api-fallback';
 import express from 'express';
 import basicAuth from 'express-basic-auth';
 import { RoomType } from '@tft-roller';
@@ -65,15 +64,14 @@ export default config({
     if (process.env.NODE_ENV !== 'production') {
       app.use('/', playground);
     } else {
-      app.use(
-        '/',
-        express.static(
-          path.join(__dirname, '../../../../tft-roller-client/build'),
-        ),
+      const staticRoot = path.join(
+        __dirname,
+        '../../../../tft-roller-client/build',
       );
-    }
+      app.use('/', express.static(staticRoot));
 
-    app.use(historyApiFallback());
+      app.use(api.historyApiFallback(staticRoot));
+    }
   },
 
   beforeListen: async () => {
