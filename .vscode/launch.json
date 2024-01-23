@@ -24,7 +24,8 @@
       "console": "integratedTerminal",
       "sourceMaps": true,
       "restart": true,
-      "internalConsoleOptions": "neverOpen"
+      "internalConsoleOptions": "neverOpen",
+      "envFile": "${workspaceFolder}/.env.production.local"
     }
   ]
 }
