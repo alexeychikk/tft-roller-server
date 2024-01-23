@@ -1,5 +1,6 @@
 import path from 'path';
 
+import { auth as colyseusAuth } from '@colyseus/auth';
 import { logger, matchMaker } from '@colyseus/core';
 import { monitor } from '@colyseus/monitor';
 import { playground } from '@colyseus/playground';
@@ -8,14 +9,16 @@ import express from 'express';
 import basicAuth from 'express-basic-auth';
 import { RoomType } from '@tft-roller';
 
-import { GameRoom, PublicLobbyRoom } from './rooms';
+import * as api from './api';
+import * as auth from './auth';
+import * as rooms from './rooms';
 
 export default config({
   initializeGameServer: (gameServer) => {
-    // matchMaker.controller.exposedMethods = ['join', 'joinById', 'reconnect'];
+    matchMaker.controller.exposedMethods = ['join', 'joinById', 'reconnect'];
 
-    gameServer.define(RoomType.Game, GameRoom).enableRealtimeListing();
-    gameServer.define(RoomType.Lobby, PublicLobbyRoom);
+    gameServer.define(RoomType.Game, rooms.GameRoom).enableRealtimeListing();
+    gameServer.define(RoomType.Lobby, rooms.PublicLobbyRoom);
   },
 
   initializeExpress: (app) => {
@@ -37,6 +40,15 @@ export default config({
     app.get('/health', (_, res) => {
       res.status(200).send();
     });
+
+    app.post('/games', colyseusAuth.middleware(), api.createGame);
+
+    app.use(
+      colyseusAuth.prefix,
+      colyseusAuth.routes({
+        onRegisterAnonymously: auth.onRegisterAnonymously,
+      }),
+    );
 
     /**
      * Use @colyseus/playground

@@ -2,6 +2,7 @@
   "compilerOptions": {
     "outDir": "build",
     "target": "ESNext",
+    "types": ["node"],
     "module": "CommonJS",
     "moduleResolution": "node",
     "strict": true,

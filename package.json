@@ -19,6 +19,7 @@
     "loadtest": "ts-node loadtest/example.ts --room gameRoom --numClients 2"
   },
   "dependencies": {
+    "@colyseus/auth": "^0.15.9",
     "@colyseus/core": "^0.15.23",
     "@colyseus/monitor": "^0.15.4",
     "@colyseus/playground": "^0.15.10",
@@ -28,6 +29,7 @@
     "class-validator": "^0.14.1",
     "express": "^4.18.2",
     "express-basic-auth": "^1.2.1",
+    "nanoid": "~3.3.7",
     "reflect-metadata": "^0.2.1",
     "remeda": "^1.37.0"
   },
@@ -36,6 +38,7 @@
     "@colyseus/testing": "^0.15.0",
     "@types/express": "^4.17.1",
     "@types/mocha": "^10.0.1",
+    "@types/node": "^20.11.5",
     "@typescript-eslint/eslint-plugin": "^6.19.0",
     "@typescript-eslint/parser": "^6.19.0",
     "eslint": "^8.56.0",
