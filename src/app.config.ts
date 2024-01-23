@@ -5,6 +5,7 @@ import { logger, matchMaker } from '@colyseus/core';
 import { monitor } from '@colyseus/monitor';
 import { playground } from '@colyseus/playground';
 import config from '@colyseus/tools';
+import historyApiFallback from 'connect-history-api-fallback';
 import express from 'express';
 import basicAuth from 'express-basic-auth';
 import { RoomType } from '@tft-roller';
@@ -33,6 +34,13 @@ export default config({
       challenge: true,
     });
 
+    app.use(
+      colyseusAuth.prefix,
+      colyseusAuth.routes({
+        onRegisterAnonymously: auth.onRegisterAnonymously,
+      }),
+    );
+
     /**
      * Bind your custom express routes here:
      * Read more: https://expressjs.com/en/starter/basic-routing.html
@@ -43,12 +51,12 @@ export default config({
 
     app.post('/games', colyseusAuth.middleware(), api.createGame);
 
-    app.use(
-      colyseusAuth.prefix,
-      colyseusAuth.routes({
-        onRegisterAnonymously: auth.onRegisterAnonymously,
-      }),
-    );
+    /**
+     * Use @colyseus/monitor
+     * It is recommended to protect this route with a password
+     * Read more: https://docs.colyseus.io/tools/monitor/#restrict-access-to-the-panel-using-a-password
+     */
+    app.use('/colyseus', basicAuthMiddleware, monitor());
 
     /**
      * Use @colyseus/playground
@@ -65,12 +73,7 @@ export default config({
       );
     }
 
-    /**
-     * Use @colyseus/monitor
-     * It is recommended to protect this route with a password
-     * Read more: https://docs.colyseus.io/tools/monitor/#restrict-access-to-the-panel-using-a-password
-     */
-    app.use('/colyseus', basicAuthMiddleware, monitor());
+    app.use(historyApiFallback());
   },
 
   beforeListen: async () => {
