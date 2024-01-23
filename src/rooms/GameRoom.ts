@@ -1,19 +1,38 @@
 import type { Client } from '@colyseus/core';
 import { logger, Room } from '@colyseus/core';
-import type { UnitContext } from '@tft-roller';
-import { CHAMPIONS_POOL, GameMessageType, GameSchema } from '@tft-roller';
+import type { GameOptions, UnitContext } from '@tft-roller';
+import {
+  GameStatus,
+  JoinGameOptions,
+  CHAMPIONS_POOL,
+  ErrorCode,
+  GameMessageType,
+  GameSchema,
+  validate,
+} from '@tft-roller';
 
-export class GameRoom extends Room<GameSchema> {
+export class GameRoom extends Room<GameSchema, GameOptions> {
   maxClients = 8;
 
-  onCreate(options: unknown) {
+  onCreate(options: GameOptions) {
     logger.info('GameRoom created', options);
+    this.setMetadata(options);
+
     const state = new GameSchema({
+      status: GameStatus.InLobby,
       players: {},
       shopChampionPool: CHAMPIONS_POOL,
     });
     this.setState(state);
 
+    this.onMessage(GameMessageType.Start, (client) => {
+      try {
+        logger.info(GameMessageType.Start, client.sessionId);
+        this.state.start(client.sessionId);
+      } catch {
+        /**/
+      }
+    });
     this.onMessage(GameMessageType.BuyExperience, (client) => {
       try {
         logger.info(GameMessageType.BuyExperience, client.sessionId);
@@ -62,12 +81,21 @@ export class GameRoom extends Room<GameSchema> {
     });
   }
 
-  onJoin(client: Client, options: unknown) {
+  async onJoin(client: Client, options: JoinGameOptions) {
     logger.info('client joined', client.sessionId, options);
     try {
+      options = await validate(JoinGameOptions, options);
+      // TODO: proper auth
+      if (
+        this.metadata.password &&
+        this.metadata.password !== options.password
+      ) {
+        client.leave();
+        return;
+      }
       this.state.createPlayer(client.sessionId);
-    } catch {
-      /**/
+    } catch (error) {
+      client.error(ErrorCode.UnprocessableEntity);
     }
   }
 
