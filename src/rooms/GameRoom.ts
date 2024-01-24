@@ -29,7 +29,11 @@ export class GameRoom extends Room<GameSchema, GameMeta> {
   async onCreate(options: GameOptions) {
     logger.info('GameRoom', this.roomId, 'created', options);
     this.options = options;
-    await this.setMetadata({ name: options.name, ownerId: options.ownerId });
+    await this.setMetadata({
+      name: options.name,
+      ownerId: options.ownerId,
+      protected: !!options.password,
+    });
 
     const state = new GameSchema({
       status: GameStatus.InLobby,

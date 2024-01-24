@@ -2,13 +2,13 @@ import type { Request } from '@colyseus/auth';
 import type { RoomListingData } from '@colyseus/core';
 import { matchMaker } from '@colyseus/core';
 import type { Response } from 'express';
-import type { GameOptions, GameRoomEntity, User } from '@tft-roller';
+import type { GameMeta, GameRoomEntity, User } from '@tft-roller';
 import { CreateGameDto, RoomType, validate } from '@tft-roller';
 
 export async function createGame(req: Request<User>, res: Response) {
   try {
     const dto = await validate(CreateGameDto, req.body);
-    const room: RoomListingData<GameOptions> = await matchMaker.createRoom(
+    const room: RoomListingData<GameMeta> = await matchMaker.createRoom(
       RoomType.Game,
       { ...dto, ownerId: req.auth?.id },
     );
