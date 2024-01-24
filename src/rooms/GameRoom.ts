@@ -121,9 +121,7 @@ export class GameRoom extends Room<GameSchema, GameMeta> {
       this.state.ownerSessionId = client.sessionId;
     }
 
-    this.state.createPlayer({
-      id: client.auth!.id,
-      isAdmin: client.auth!.isAdmin,
+    this.state.createPlayer(client.auth!, {
       sessionId: client.sessionId,
     });
   }
@@ -145,7 +143,7 @@ export class GameRoom extends Room<GameSchema, GameMeta> {
     ) {
       const player: PlayerSchema = this.state.players.values().next().value;
       this.state.ownerSessionId = player.sessionId;
-      await this.setMetadata({ ownerId: player.id });
+      await this.setMetadata({ ownerId: player.user.id });
     }
   }
 
