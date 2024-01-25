@@ -9,9 +9,7 @@ import type {
   User,
 } from '@tft-roller';
 import {
-  GameStatus,
   JoinGameDto,
-  CHAMPIONS_POOL,
   ErrorCode,
   GameMessageType,
   GameSchema,
@@ -35,11 +33,7 @@ export class GameRoom extends Room<GameSchema, GameMeta> {
       protected: !!options.password,
     });
 
-    const state = new GameSchema({
-      status: GameStatus.InLobby,
-      players: {},
-      shopChampionPool: CHAMPIONS_POOL,
-    });
+    const state = new GameSchema({ clock: this.clock });
     this.setState(state);
 
     this.onMessage(GameMessageType.Start, (client) => {
