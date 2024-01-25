@@ -17,7 +17,10 @@ export default config({
   initializeGameServer: (gameServer) => {
     matchMaker.controller.exposedMethods = ['join', 'joinById', 'reconnect'];
 
-    gameServer.define(RoomType.Game, rooms.GameRoom).enableRealtimeListing();
+    gameServer
+      .define(RoomType.Game, rooms.GameRoom)
+      .enableRealtimeListing()
+      .sortBy({ name: 'asc', clients: 'desc' });
     gameServer.define(RoomType.Lobby, rooms.PublicLobbyRoom);
   },
 

@@ -45,7 +45,8 @@ export class GameRoom extends Room<GameSchema, GameMeta> {
     this.onMessage(GameMessageType.Start, (client) => {
       try {
         logger.info(this.roomId, GameMessageType.Start, client.sessionId);
-        this.state.start(client.sessionId);
+        const started = this.state.start(client.sessionId);
+        if (started) this.lock();
       } catch {
         /**/
       }
