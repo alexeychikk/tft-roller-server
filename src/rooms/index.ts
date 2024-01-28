@@ -1,2 +1,2 @@
-export * from './GameRoom';
-export * from './PublicLobbyRoom';
+export * from './game';
+export * from './lobby';
