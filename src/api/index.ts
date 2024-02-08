@@ -1,2 +1,2 @@
-export * from './games';
-export * from './utils';
+export * from './create-game.controller';
+export * from './history-api-fallback.controller';

@@ -1,6 +1,6 @@
 import { Command } from '@colyseus/command';
-import type { PlayerSchema } from '@tft-roller';
 
+import type { PlayerSchema } from '@src/schema';
 import type { CommandPayload } from '@src/types';
 import type { GameRoom } from '../game.room';
 

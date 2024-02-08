@@ -3,7 +3,9 @@ import { Dispatcher } from '@colyseus/command';
 import type { Client } from '@colyseus/core';
 import { logger, Room } from '@colyseus/core';
 import type { GameMeta, GameOptions, User, JoinGameDto } from '@tft-roller';
-import { GameMessageType, GameSchema } from '@tft-roller';
+import { GameMessageType } from '@tft-roller';
+
+import { GameSchema } from '@src/schema';
 
 import {
   BuyChampionCommand,
