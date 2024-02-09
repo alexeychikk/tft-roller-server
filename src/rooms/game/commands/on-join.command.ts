@@ -24,7 +24,7 @@ export class OnJoinCommand extends Command<GameRoom, OnJoinPayload> {
       this.state.ownerSessionId = client.sessionId;
     }
 
-    this.state.createPlayer(client.auth!, {
+    this.state.addPlayer(client.auth!, {
       sessionId: client.sessionId,
     });
   }

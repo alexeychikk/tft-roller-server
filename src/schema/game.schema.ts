@@ -11,8 +11,6 @@ import type {
 import {
   CHAMPIONS_MAP,
   CHAMPIONS_POOL,
-  EXPERIENCE_PER_BUY,
-  GOLD_PER_EXPERIENCE_BUY,
   GOLD_PER_REROLL,
   Game,
   GamePhase,
@@ -60,7 +58,7 @@ export class GameSchema extends withSchema(Game) {
     });
   }
 
-  createPlayer(user: User, options: PartialFields<Player> = {}) {
+  addPlayer(user: User, options: PartialFields<Player> = {}) {
     const player = new PlayerSchema({
       gold: 0,
       experience: 0,
@@ -89,17 +87,6 @@ export class GameSchema extends withSchema(Game) {
     player.table.units.forEach((unit) => this.addToChampionPool(unit.name, 1));
     player.bench.units.forEach((unit) => this.addToChampionPool(unit.name, 1));
     this.players.delete(sessionId);
-  }
-
-  buyExperience(sessionId: string) {
-    if (this.status !== GameStatus.InProgress) return;
-    if (this.phase !== GamePhase.Reroll) return;
-    const player = this.players.get(sessionId);
-    if (!player) return;
-    if (!player.isEnoughGoldToBuyExperience) return;
-    if (player.isMaxLevelReached) return;
-    player.experience += EXPERIENCE_PER_BUY;
-    player.gold -= GOLD_PER_EXPERIENCE_BUY;
   }
 
   buyChampion(sessionId: string, index: number) {
