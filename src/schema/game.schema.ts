@@ -1,4 +1,3 @@
-import type { Clock } from '@colyseus/core';
 import type { MapSchema } from '@colyseus/schema';
 import { filter, type } from '@colyseus/schema';
 import { mapValues, pickBy, sumBy, times } from 'remeda';
@@ -19,7 +18,6 @@ import {
   GamePhase,
   GameStatus,
   SHOP_SIZE,
-  TIME_PER_PHASE,
   weightedRandom,
 } from '@tft-roller';
 
@@ -52,9 +50,7 @@ export class GameSchema extends withSchema(Game) {
   @type({ map: 'number' })
   shopChampionPool: MapSchema<number>;
 
-  protected clock: Clock;
-
-  constructor(options: { clock: Clock }) {
+  constructor() {
     super({
       status: GameStatus.InLobby,
       stage: 0,
@@ -62,7 +58,6 @@ export class GameSchema extends withSchema(Game) {
       players: {},
       shopChampionPool: CHAMPIONS_POOL,
     });
-    this.clock = options?.clock;
   }
 
   createPlayer(user: User, options: PartialFields<Player> = {}) {
@@ -94,18 +89,6 @@ export class GameSchema extends withSchema(Game) {
     player.table.units.forEach((unit) => this.addToChampionPool(unit.name, 1));
     player.bench.units.forEach((unit) => this.addToChampionPool(unit.name, 1));
     this.players.delete(sessionId);
-  }
-
-  // TODO: throw errors and handle them in GameRoom
-  start(sessionId: string) {
-    if (this.status !== GameStatus.InLobby) return;
-    if (this.players.size < 2) return;
-    const player = this.players.get(sessionId);
-    if (player?.sessionId !== this.ownerSessionId) return;
-    this.players.forEach((player) => this.rerollShop(player.sessionId));
-    this.status = GameStatus.InProgress;
-    this.gameLoop();
-    return true;
   }
 
   buyExperience(sessionId: string) {
@@ -224,62 +207,6 @@ export class GameSchema extends withSchema(Game) {
     player.gold -= GOLD_PER_REROLL;
   }
 
-  protected gameLoop() {
-    switch (this.phase) {
-      case GamePhase.Preparation: {
-        this.players.forEach((player) => {
-          player.gold += 50;
-        });
-        this.clock.setTimeout(() => {
-          this.phase = GamePhase.Reroll;
-          this.gameLoop();
-        }, TIME_PER_PHASE[GamePhase.Preparation]);
-        return;
-      }
-
-      case GamePhase.Reroll: {
-        this.clock.setTimeout(() => {
-          this.phase = GamePhase.Combat;
-          this.gameLoop();
-        }, TIME_PER_PHASE[GamePhase.Reroll]);
-        return;
-      }
-
-      case GamePhase.Combat: {
-        this.players.forEach((player) => {
-          // TODO: combat logic
-          player.health -= 10;
-        });
-
-        this.clock.setTimeout(() => {
-          this.phase = GamePhase.Elimination;
-          this.gameLoop();
-        }, TIME_PER_PHASE[GamePhase.Combat]);
-        return;
-      }
-
-      case GamePhase.Elimination: {
-        this.players.forEach((player) => {
-          if (player.health <= 0) {
-            this.removePlayer(player.sessionId);
-          }
-        });
-
-        if (this.players.size <= 1) {
-          this.status = GameStatus.Finished;
-          return;
-        }
-
-        this.clock.setTimeout(() => {
-          this.stage++;
-          this.phase = GamePhase.Preparation;
-          this.gameLoop();
-        }, TIME_PER_PHASE[GamePhase.Elimination]);
-        return;
-      }
-    }
-  }
-
   protected addToChampionPool(name: string, amount: number) {
     this.shopChampionPool.set(
       name,
@@ -287,7 +214,7 @@ export class GameSchema extends withSchema(Game) {
     );
   }
 
-  protected rerollShop(sessionId: string) {
+  rerollShop(sessionId: string) {
     const player = this.players.get(sessionId);
     if (!player) return;
     times(player.shopChampionNames.length, (index) =>

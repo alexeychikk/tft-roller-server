@@ -1,11 +1,11 @@
 import { JWT } from '@colyseus/auth';
-import { Dispatcher } from '@colyseus/command';
 import type { Client } from '@colyseus/core';
 import { logger, Room } from '@colyseus/core';
 import type { GameMeta, GameOptions, User, JoinGameDto } from '@tft-roller';
 import { GameMessageType } from '@tft-roller';
 
 import { GameSchema } from '@src/schema';
+import { SafeDispatcher } from '@src/services';
 
 import {
   BuyChampionCommand,
@@ -22,7 +22,7 @@ import {
 export class GameRoom extends Room<GameSchema, GameMeta> {
   maxClients = 8;
   options: GameOptions;
-  dispatcher = new Dispatcher(this);
+  dispatcher = new SafeDispatcher(this);
 
   static async onAuth(token: string) {
     return await JWT.verify(token);
@@ -37,7 +37,7 @@ export class GameRoom extends Room<GameSchema, GameMeta> {
       protected: !!options.password,
     });
 
-    const state = new GameSchema({ clock: this.clock });
+    const state = new GameSchema();
     this.setState(state);
 
     this.onMessage(GameMessageType.Start, (client) => {

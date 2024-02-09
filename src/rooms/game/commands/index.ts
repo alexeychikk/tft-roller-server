@@ -1,5 +1,6 @@
 export * from './buy-champion.command';
 export * from './buy-experience.command';
+export * from './game-loop.command';
 export * from './move-unit.command';
 export * from './on-dispose.command';
 export * from './on-join.command';
