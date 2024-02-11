@@ -5,7 +5,6 @@ import type { GenericClient, Player, PartialFields, User } from '@tft-roller';
 import {
   CHAMPIONS_MAP,
   CHAMPIONS_POOL,
-  GOLD_PER_REROLL,
   Game,
   GamePhase,
   GameStatus,
@@ -80,20 +79,6 @@ export class GameSchema extends withSchema(Game) {
     player.table.units.forEach((unit) => this.addToChampionPool(unit.name, 1));
     player.bench.units.forEach((unit) => this.addToChampionPool(unit.name, 1));
     this.players.delete(sessionId);
-  }
-
-  reroll(sessionId: string) {
-    if (this.status !== GameStatus.InProgress) return;
-    if (this.phase !== GamePhase.Reroll) return;
-    const player = this.players.get(sessionId);
-    if (!player?.isEnoughGoldToReroll) return;
-
-    player.shopChampionNames.forEach((name) => {
-      if (!name) return;
-      this.addToChampionPool(name, 1);
-    });
-    this.rerollShop(sessionId);
-    player.gold -= GOLD_PER_REROLL;
   }
 
   addToChampionPool(name: string, amount: number) {
