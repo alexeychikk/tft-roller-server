@@ -12,9 +12,12 @@ import { RoomType } from '@tft-roller';
 import * as api from './api';
 import * as auth from './auth';
 import * as rooms from './rooms';
+import { env } from './services';
 
 export default config({
   initializeGameServer: (gameServer) => {
+    env.ensureVariablesSet();
+
     matchMaker.controller.exposedMethods = ['join', 'joinById', 'reconnect'];
 
     gameServer
@@ -25,13 +28,9 @@ export default config({
   },
 
   initializeExpress: (app) => {
-    if (!process.env.ADMIN_PASSWORD) {
-      throw new Error('process.env.ADMIN_PASSWORD is not set');
-    }
-
     const basicAuthMiddleware = basicAuth({
       users: {
-        admin: process.env.ADMIN_PASSWORD,
+        admin: env.ADMIN_PASSWORD,
       },
       challenge: true,
     });
@@ -64,7 +63,7 @@ export default config({
      * Use @colyseus/playground
      * (It is not recommended to expose this route in a production environment)
      */
-    if (process.env.NODE_ENV !== 'production') {
+    if (!env.IS_PROD) {
       app.use('/', playground);
     } else {
       const staticRoot = path.join(

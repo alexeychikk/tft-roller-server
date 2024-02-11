@@ -3,6 +3,8 @@ import { nanoid } from 'nanoid';
 import type { User } from '@tft-roller';
 import { SignInAnonymouslyDto, validate } from '@tft-roller';
 
+import { env } from '@src/services';
+
 export const onRegisterAnonymously: RegisterAnonymouslyCallback = async (
   data: SignInAnonymouslyDto,
 ): Promise<User> => {
@@ -10,6 +12,6 @@ export const onRegisterAnonymously: RegisterAnonymouslyCallback = async (
   return {
     ...dto,
     id: nanoid(),
-    isAdmin: dto.password === process.env.ADMIN_PASSWORD,
+    isAdmin: dto.password === env.ADMIN_PASSWORD,
   };
 };

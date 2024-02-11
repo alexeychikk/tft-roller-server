@@ -14,8 +14,9 @@ import { listen } from '@colyseus/tools';
 
 // Import Colyseus config
 import app from './app.config';
+import { env } from './services';
 
 export { app };
 
 // Create and listen on 2567 (or PORT environment variable.)
-listen(app, parseInt(process.env.PORT!));
+listen(app, env.PORT);
