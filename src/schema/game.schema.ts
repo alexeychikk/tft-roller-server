@@ -22,7 +22,7 @@ import {
 import { withSchema } from '@src/utils';
 
 import { PlayerSchema } from './player.schema';
-import { UnitSchema } from './unit.schema';
+import type { UnitSchema } from './unit.schema';
 import { UnitsGridSchema } from './units-grid.schema';
 import { UserSchema } from './user.schema';
 
@@ -87,64 +87,6 @@ export class GameSchema extends withSchema(Game) {
     player.table.units.forEach((unit) => this.addToChampionPool(unit.name, 1));
     player.bench.units.forEach((unit) => this.addToChampionPool(unit.name, 1));
     this.players.delete(sessionId);
-  }
-
-  buyChampion(sessionId: string, index: number) {
-    if (this.status !== GameStatus.InProgress) return;
-    if (this.phase !== GamePhase.Reroll) return;
-    const player = this.players.get(sessionId);
-    if (!player) return;
-    const championName = player.shopChampionNames[index];
-    if (!championName) return;
-
-    const champion = CHAMPIONS_MAP[championName];
-    if (player.gold < champion.tier) return;
-
-    if (!player.bench.firstEmptySlot) {
-      const benchUnitsCoords = player.bench.getCoordsOfUnitsOfStars(
-        championName,
-        2,
-        1,
-      );
-      const tableUnitsCoords = player.table.getCoordsOfUnitsOfStars(
-        championName,
-        2,
-        1,
-      );
-      if (!benchUnitsCoords.length && !tableUnitsCoords.length) {
-        return;
-      }
-
-      const shopChampionIndexes = [
-        index,
-        ...player.shopChampionNames
-          .map((name, i) => (name === championName ? i : -1))
-          .filter((i) => i !== -1 && i !== index),
-      ];
-      const amountToBuy =
-        3 - (benchUnitsCoords.length + tableUnitsCoords.length);
-      if (shopChampionIndexes.length < amountToBuy) {
-        return;
-      }
-      if (player.gold < amountToBuy * champion.tier) {
-        return;
-      }
-
-      times(amountToBuy, (i) => {
-        player.shopChampionNames[shopChampionIndexes[i]] = '';
-      });
-      player.gold -= amountToBuy * champion.tier;
-      this.mergeUnits(sessionId, { championName, minUnitsAmount: 1 });
-      return;
-    }
-
-    player.shopChampionNames[index] = '';
-    player.bench.setUnit(
-      player.bench.firstEmptySlot,
-      new UnitSchema({ name: championName, stars: 1 }),
-    );
-    player.gold -= champion.tier;
-    this.mergeUnits(sessionId, { championName });
   }
 
   sellUnit(sessionId: string, { coords, gridType }: UnitContext) {
@@ -260,7 +202,7 @@ export class GameSchema extends withSchema(Game) {
     this.addToChampionPool(championName, -1);
   }
 
-  protected mergeUnits(
+  mergeUnits(
     sessionId: string,
     {
       championName,
