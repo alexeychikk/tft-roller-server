@@ -89,18 +89,6 @@ export class GameSchema extends withSchema(Game) {
     this.players.delete(sessionId);
   }
 
-  sellUnit(sessionId: string, { coords, gridType }: UnitContext) {
-    if (this.status !== GameStatus.InProgress) return;
-    if (this.phase !== GamePhase.Reroll) return;
-    const player = this.players.get(sessionId);
-    if (!player) return;
-    const unit = player[gridType]?.getUnit(coords);
-    if (!unit) return;
-    player[gridType].setUnit(coords, undefined);
-    this.addToChampionPool(unit.name, 1);
-    player.gold += unit.sellCost;
-  }
-
   moveUnit(sessionId: string, source: UnitContext, dest: UnitContext) {
     if (this.status !== GameStatus.InProgress) return;
     if (this.phase !== GamePhase.Reroll) return;
@@ -136,7 +124,7 @@ export class GameSchema extends withSchema(Game) {
     player.gold -= GOLD_PER_REROLL;
   }
 
-  protected addToChampionPool(name: string, amount: number) {
+  addToChampionPool(name: string, amount: number) {
     this.shopChampionPool.set(
       name,
       (this.shopChampionPool.get(name) || 0) + amount,
