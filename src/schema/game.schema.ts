@@ -1,13 +1,7 @@
 import type { MapSchema } from '@colyseus/schema';
 import { filter, type } from '@colyseus/schema';
 import { mapValues, pickBy, sumBy, times } from 'remeda';
-import type {
-  GenericClient,
-  Player,
-  PartialFields,
-  UnitContext,
-  User,
-} from '@tft-roller';
+import type { GenericClient, Player, PartialFields, User } from '@tft-roller';
 import {
   CHAMPIONS_MAP,
   CHAMPIONS_POOL,
@@ -22,7 +16,6 @@ import {
 import { withSchema } from '@src/utils';
 
 import { PlayerSchema } from './player.schema';
-import type { UnitSchema } from './unit.schema';
 import { UnitsGridSchema } from './units-grid.schema';
 import { UserSchema } from './user.schema';
 
@@ -87,27 +80,6 @@ export class GameSchema extends withSchema(Game) {
     player.table.units.forEach((unit) => this.addToChampionPool(unit.name, 1));
     player.bench.units.forEach((unit) => this.addToChampionPool(unit.name, 1));
     this.players.delete(sessionId);
-  }
-
-  moveUnit(sessionId: string, source: UnitContext, dest: UnitContext) {
-    if (this.status !== GameStatus.InProgress) return;
-    if (this.phase !== GamePhase.Reroll) return;
-    const player = this.players.get(sessionId);
-    if (!player?.canMoveUnit(source, dest)) return;
-
-    const sourceGrid = player[source.gridType];
-    const destGrid = player[dest.gridType];
-    if (!sourceGrid || !destGrid) return;
-
-    const unitFrom = sourceGrid.getUnit(source.coords) as UnitSchema;
-    const unitTo = destGrid.getUnit(dest.coords) as UnitSchema;
-
-    if (source.gridType === dest.gridType) {
-      sourceGrid.setUnit(source.coords, unitTo).setUnit(dest.coords, unitFrom);
-    } else {
-      sourceGrid.setUnit(source.coords, unitTo);
-      destGrid.setUnit(dest.coords, unitFrom);
-    }
   }
 
   reroll(sessionId: string) {
